@@ -14,6 +14,7 @@ import { IPFSImage } from '@src/components/shared/IPFSImage';
 
 import placeholder from '@assets/images/placeholder.png';
 import './nft.scss';
+import { styled } from 'styled-components';
 
 type NFTProps = NFTInfo & {
   collectionInfo?: TokenInfo
@@ -70,7 +71,7 @@ export default function NFT({ metadata, serial_number, collectionInfo }: NFTProp
   }, [loadMetadata]);
 
   return (
-    <a
+    <NFTWrapper
       href={`https://hashscan.io/${HEDERA_NETWORK}/token/${collectionInfo?.token_id}`}
       target='_blank'
       className={nftCardClassnames}
@@ -82,9 +83,9 @@ export default function NFT({ metadata, serial_number, collectionInfo }: NFTProp
       ) : (
         <>
           <div className='nft-card__image'>
-            {message && (
+            {/* {message && (
               <p className={nftCardMessageClassNamees}>{message}</p>
-            )}
+            )} */}
 
             {loadedMetadata && loadedMetadata.image ? (
               <IPFSImage
@@ -119,6 +120,10 @@ export default function NFT({ metadata, serial_number, collectionInfo }: NFTProp
           </div>
         </>
       )}
-    </a>
+    </NFTWrapper>
   );
 }
+
+const NFTWrapper = styled.a`
+  
+`

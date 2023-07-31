@@ -2,18 +2,19 @@ import styled from 'styled-components';
 import { GiSkullCrossedBones } from 'react-icons/gi';
 import { enableBodyScroll } from 'body-scroll-lock';
 import classNames from 'classnames';
-import { Divide as Hamburger } from 'hamburger-react';
-import React, {
+import { Client, AccountBalanceQuery, TransferTransaction } from '@hashgraph/sdk';
+import {
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
+
+
 import { Link, useLocation } from 'react-router-dom';
 import { useOnClickAway } from 'use-on-click-away';
-import SwitchTransition from 'react-transition-group/SwitchTransition';
-import CSSTransition from 'react-transition-group/CSSTransition';
 
 import { ModalContext } from '@utils/context/ModalContext';
 import { HomepageContext } from '@utils/context/HomepageContext';
@@ -21,10 +22,8 @@ import useHederaWallets, { ConnectionStateType } from '@hooks/useHederaWallets';
 import useLayout from '@utils/hooks/useLayout';
 
 import ConnectionModal from '@components/shared/modals/ConnectionModal';
-
-import Logo from '@assets/images/logo.svg';
-import ConnectIcon from '@assets/images/icons/connect.svg'
-import ProfileIcon from '@assets/images/icons/profile.svg'
+import { AppContext } from '@src/utils/context/context';
+import { HederaWalletsContext } from '@src/utils/context/HederaWalletsContext';
 
 const Header = () => {
   const { connectedWalletType, userWalletId } = useHederaWallets();
@@ -36,6 +35,12 @@ const Header = () => {
   const expandedMenuRef = useRef(null);
   const [isMobileNavbarMenuExpanded, setIsMobileNavbarMenuExpanded] =
     useState(false);
+
+  const AppData = useContext(AppContext);
+  const {
+    hashConnect,
+    hashConnectState,
+  } = useContext(HederaWalletsContext);
 
   const handleShowModal = useCallback(() => {
     setModalContent(<ConnectionModal />);
@@ -78,6 +83,44 @@ const Header = () => {
       ? resetHomepageData()
       : null
   ), [location.pathname, resetHomepageData])
+
+  useEffect(() => {
+    (async () => {
+      const client = Client.forMainnet();
+
+      client.setOperator
+
+      const balanceQuery = await new AccountBalanceQuery().setAccountId('0.0.3239335')
+        .execute(client);
+
+      console.log("balanceQuery: ", balanceQuery.tokens?._map.get(AppData.FTContract)?.low);
+    })()
+  })
+
+
+
+  useEffect(() => {
+    (async () => {
+
+      const tokenId = AppData.FTContract;
+      const accountId1 = '0.0.3239335';
+      const accountId2 = '0.0.1229586';
+      const client = Client.forMainnet();
+
+      const provider = hashConnect?.getProvider("mainnet", hashConnectState.topic || '', accountId1);
+      if (provider) {
+        const signer = hashConnect?.getSigner(provider);
+
+        if (signer) {
+          let trans = await new TransferTransaction()
+            .addTokenTransfer(tokenId, accountId1, -1)
+            .addTokenTransfer(tokenId, accountId2, 1)
+            .freezeWithSigner(signer);
+          let res = await trans.executeWithSigner(signer);
+        }
+      }
+    })()
+  })
 
   return (
     // <header className={headerClassnames} ref={headerRef}>
@@ -161,15 +204,24 @@ const Header = () => {
         <p>THE BONES CHATROOM</p>
       </TopHeader>
       <NavBarContainer>
-        <NavBarLink>
-          <Link to='#'>Home</Link>
-        </NavBarLink>
-        <NavBarLink>
-          <Link to='#'>Marketplace</Link>
-        </NavBarLink>
-        <NavBarLink>
-          <Link to='#'>Bank</Link>
-        </NavBarLink>
+        <Pages>
+          <NavBarLink>
+            <Link to='/'>Home</Link>
+          </NavBarLink>
+          <NavBarLink>
+            <Link to='#'>Marketplace</Link>
+          </NavBarLink>
+          <NavBarLink>
+            <Link to='#'>Bank</Link>
+          </NavBarLink>
+          {
+            connectedWalletType !== ConnectionStateType.NOCONNECTION ? (
+              <NavBarLink>
+                <Link to='/mynfts'>My NFTs</Link>
+              </NavBarLink>
+            ) : undefined
+          }
+        </Pages>
         <NavBarLink>
           <a onClick={handleShowModal}>
             {connectedWalletType === ConnectionStateType.NOCONNECTION ? (
@@ -206,17 +258,20 @@ const TopHeader = styled.div`
 const NavBarContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   padding: 10px 20px;
-  & div:not(:last-child) {
-    border-right: 1px solid #99FFAF;
-  }
+`
+
+const Pages = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 `
 
 const NavBarLink = styled.div`
-  width: 25%;
   text-align: center;
-  
+  padding: 10px;
   a {
     font-size: 20px;
     color: #99FFAF;
@@ -224,8 +279,6 @@ const NavBarLink = styled.div`
 
     cursor: pointer;
   }
-
-  
 `
 
 export default Header;

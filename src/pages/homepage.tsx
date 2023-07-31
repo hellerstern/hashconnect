@@ -189,17 +189,18 @@ export default function MinterWizard() {
     resetHomepageData()
   }, [resetHomepageData])
 
-  const messageContents = useState([]);
-
   return (
     <HomePageWrapper>
-      <LeftDiv>
-        <Header />
-      </LeftDiv>
+      <Header />
+      <ChatroomWrapper>
+        <LeftDiv>
 
-      <RightDiv>
+        </LeftDiv>
 
-      </RightDiv>
+        <RightDiv>
+
+        </RightDiv>
+      </ChatroomWrapper>
     </HomePageWrapper>
   )
 }
@@ -207,25 +208,52 @@ export default function MinterWizard() {
 
 const HomePageWrapper = styled.div`
   display: flex;
-  align-items: center;
-  width: 100%;
+  flex-direction: column;
+  width: 100vw;
   height: 100vh;
 `
 
 const LeftDiv = styled.div`
-  flex: 1;
-  height: 100vh;
+  width: 80vw;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: start;
 `
 
 const RightDiv = styled.div`
-  width: 300px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 100%;
   min-height: 100%;
   color: white;
-  background-color: #1E1E1E;
-  border-left: 3px solid #1C1C1C;
+  overflow: scroll;
+  border: 1px solid red;
+  border-left: 3px solid #99FFAF;
   margin-left: 5px;
   padding-left: 5px;
+
+  ::-webkit-scrollbar {
+    width: 10px !important;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1 !important; 
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #888 !important; 
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555 !important;
+  }
+`
+
+const ChatroomWrapper = styled.div`
+  display: flex;
+  overflow: scroll;
+  flex: 1;
+  border: 1px solid yellow;
 `

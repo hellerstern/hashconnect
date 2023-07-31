@@ -16,10 +16,12 @@ import Scrollbar from '@components/shared/layout/Scrollbar';
 import Loader from '@components/shared/loader/Loader';
 import NFT from '@components/views/my-nft-collection/NFT';
 import CollectionList from '@components/views/my-nft-collection/CollectionList';
+import { styled } from 'styled-components';
+import Header from '@src/components/shared/layout/Header';
 
 export default function MyNFTCollection() {
   const { userWalletId } = useHederaWallets();
-  const [selectedCollectionsId, setSelectedCollectionsId] = useState<string[]>([]);
+  const [selectedCollectionsId, setSelectedCollectionsId] = useState<string[]>(['0.0.1413693']);
   const {
     collections,
     loading,
@@ -92,37 +94,31 @@ export default function MyNFTCollection() {
         <Loader />
       </div>
     ) : (
-      <Scrollbar
-        renderOn={{
-          tablet: false,
-          laptop: false,
-          desktop: false,
-          desktopWide: false,
-          desktopExtraWide: false
-        }}
-      >
-        <div className='my-nft-collection'>
-          <CollectionList
-            setSelectedCollectionsId={setSelectedCollectionsId}
-            selectedCollectionsId={selectedCollectionsId}
-            collections={collections}
-          />
-
-          <div className='my-nft-collection__nfts'>
-            {renderNFTs()}
-          </div>
-        </div>
-      </Scrollbar>
+      renderSelectedNFTs()
     )
   ), [collections, loading, renderNFTs, selectedCollectionsId, setSelectedCollectionsId])
 
   return (
-    <div className='mc--h container--padding container--max-height bg--transparent'>
+    <MyNFTWrapper>
+      <Header></Header>
       {!userWalletId ? (
         <div>Firstly, you need connect your wallet!</div>
       ) : (
-        renderUserNfts()
+        <NFTs>
+          {renderUserNfts()}
+        </NFTs>
       )}
-    </div>
+    </MyNFTWrapper>
   );
 }
+
+const MyNFTWrapper = styled.div`
+
+`
+const NFTs = styled.div`
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+`

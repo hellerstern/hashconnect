@@ -39,7 +39,7 @@ const routes: Array<CommonRoute> = [
     component: Homepage,
   },
   {
-    path: '/my-nft-collection',
+    path: '/mynfts',
     component: MyWallet,
   },
   {

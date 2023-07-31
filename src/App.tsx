@@ -27,6 +27,7 @@ import HederaWalletsProvider from '@utils/context/HederaWalletsContext';
 import ModalProvider from '@utils/context/ModalContext';
 import LayoutProvider from '@utils/context/LayoutContext';
 import { HomepageContextProvider } from '@utils/context/HomepageContext';
+import { AppContextProvider } from '@utils/context/context';
 
 function App() {
   return (
@@ -34,20 +35,22 @@ function App() {
       <ModalProvider>
         <HederaWalletsProvider>
           <HomepageContextProvider>
-            <>
-              <Router>
-                <Routes />
-              </Router>
-              <ToastContainer
-                theme='dark'
-                position='bottom-right'
-                newestOnTop
-              />
-            </>
+            <AppContextProvider>
+              <>
+                <Router>
+                  <Routes />
+                </Router>
+                <ToastContainer
+                  theme='dark'
+                  position='bottom-right'
+                  newestOnTop
+                />
+              </>
+            </AppContextProvider>
           </HomepageContextProvider>
         </HederaWalletsProvider>
       </ModalProvider>
-    </LayoutProvider>
+    </LayoutProvider >
   );
 }
 
