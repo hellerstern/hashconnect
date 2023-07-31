@@ -1,22 +1,3 @@
-/*
- * Hedera NFT Minter App
- *
- * Copyright (C) 2021 - 2022 Hedera Hashgraph, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import map from 'lodash/map';
 import find from 'lodash/find';
@@ -76,13 +57,13 @@ export default function MyNFTCollection() {
 
       return (
         <NFT
-          key={`nft_${ nft.token_id }.${ nft.serial_number }-card`}
+          key={`nft_${nft.token_id}.${nft.serial_number}-card`}
           {...nft}
           collectionInfo={collectionInfo}
         />
       );
     }
-  )), [collections, selectedCollectionsNFTs]);
+    )), [collections, selectedCollectionsNFTs]);
 
   const renderSelectedCollectionError = useCallback(() => (
     !selectedCollectionsId
@@ -97,7 +78,7 @@ export default function MyNFTCollection() {
     selectedCollectionsNFTs && selectedCollectionsNFTs.length <= 0 ? (
       renderSelectedCollectionError()
     ) : (
-      <Scrollbar renderOn={{mobileSmall: false, mobile: false}}>
+      <Scrollbar renderOn={{ mobileSmall: false, mobile: false }}>
         <div className='my-nft-collection__nfts__grid'>
           {renderSelectedNFTs()}
         </div>

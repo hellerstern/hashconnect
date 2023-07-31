@@ -58,11 +58,11 @@ export default function LayoutProvider({
     if (document && window) {
       document.documentElement.style.setProperty(
         '--vh',
-        `${ window.innerHeight }px`
+        `${window.innerHeight}px`
       );
       document.documentElement.style.setProperty(
         '--vw',
-        `${ window.innerWidth }px`
+        `${window.innerWidth}px`
       );
     }
   }, []);

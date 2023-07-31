@@ -46,7 +46,7 @@ const routes: Array<CommonRoute> = [
     path: '/terms-of-service',
     component: TermsOfService,
   },
-{
+  {
     path: '/404',
     component: NotFound,
   },

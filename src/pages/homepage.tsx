@@ -1,23 +1,4 @@
-/*
- * Hedera NFT Minter App
- *
- * Copyright (C) 2021 - 2022 Hedera Hashgraph, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Formik, FormikValues } from 'formik';
 import { toast } from 'react-toastify';
 import { TokenId } from '@hashgraph/sdk';
@@ -31,10 +12,12 @@ import filterFormValuesToNFTMetadata from '@utils/helpers/filterFormValuesToNFTM
 import { initialValues } from '@utils/const/minter-wizard';
 import { MintTypes } from '@utils/entity/MinterWizard'
 import { NFTMetadata } from '@utils/entity/NFT-Metadata';
+import Header from '@components/shared/layout/Header';
 
 import { ValidationSchema } from '@components/views/minter-wizard/validation-schema';
 import MinterWizardForm from '@components/views/minter-wizard';
 import Summary from '@components/views/minter-wizard/Summary';
+import { styled } from 'styled-components';
 
 const META_KEYS = [
   'name',
@@ -61,7 +44,7 @@ export default function MinterWizard() {
   }, []);
 
   const uploadMetadata = useCallback(async (metadata) => {
-    const orderedMetadata: {[key: string]: any} = {};
+    const orderedMetadata: { [key: string]: any } = {};
 
     for (const key of META_KEYS) {
       if (metadata[key]) {
@@ -117,12 +100,12 @@ export default function MinterWizard() {
   }, [])
 
   const handleFormSubmit = useCallback(async (values) => {
-    const formValues : FormikValues = {...values}
+    const formValues: FormikValues = { ...values }
     const tokenSymbol = formValues.symbol;
 
     delete formValues.symbol;
     let formTokenId = formValues?.token_id
-    let metaCIDs : UploadResponse[] = []
+    let metaCIDs: UploadResponse[] = []
 
     try {
       if (!userWalletId) {
@@ -143,7 +126,7 @@ export default function MinterWizard() {
             throw new Error('Error when uploading NFT File!');
           }
           filteredValues.type = formValues.image.type;
-          filteredValues.image = `ipfs://${ imageData.value.cid }`;
+          filteredValues.image = `ipfs://${imageData.value.cid}`;
         }
 
         // upload metadata
@@ -188,7 +171,7 @@ export default function MinterWizard() {
         metaCIDs.map(({ value }) => value.cid)
       );
 
-      setNewNFTdata({...formValues, tokenId: tokenIdToMint})
+      setNewNFTdata({ ...formValues, tokenId: tokenIdToMint })
     } catch (e) {
       renderMintingError(e)
     }
@@ -206,26 +189,43 @@ export default function MinterWizard() {
     resetHomepageData()
   }, [resetHomepageData])
 
+  const messageContents = useState([]);
+
   return (
-    <div className='mc--h container--padding container--max-height bg--transparent'>
-      <SwitchTransition>
-        <CSSTransition
-          key={tokenCreated ? 'created' : 'creating'}
-          addEndListener={(node, done) => node.addEventListener('transitionend', done, false)}
-          classNames='fade'
-        >
-          {tokenCreated ? (
-              <Summary mintedNFTData={mintedNFTData} />
-            ) : (
-              <Formik
-                initialValues={initialValues}
-                onSubmit={handleFormSubmit}
-                component={MinterWizardForm}
-                validationSchema={ValidationSchema}
-              />
-          )}
-        </CSSTransition>
-      </SwitchTransition>
-    </div>
+    <HomePageWrapper>
+      <LeftDiv>
+        <Header />
+      </LeftDiv>
+
+      <RightDiv>
+
+      </RightDiv>
+    </HomePageWrapper>
   )
 }
+
+
+const HomePageWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+`
+
+const LeftDiv = styled.div`
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+`
+
+const RightDiv = styled.div`
+  width: 300px;
+  min-height: 100%;
+  color: white;
+  background-color: #1E1E1E;
+  border-left: 3px solid #1C1C1C;
+  margin-left: 5px;
+  padding-left: 5px;
+`

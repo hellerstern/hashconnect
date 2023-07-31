@@ -47,19 +47,18 @@ const useHashPack = () => {
 
   // PREPARE APP CONFIG
   const hederaNetworkPrefix = useMemo(() => (
-    HEDERA_NETWORK === 'testnet' ? `${ HEDERA_NETWORK }.` : ''
+    HEDERA_NETWORK === 'testnet' ? `${HEDERA_NETWORK}.` : ''
   ), [])
 
-
   const appConfig = useMemo<HashConnectTypes.AppMetadata>(() => ({
-    name: `${ hederaNetworkPrefix }${ HASHPACK_APP_CONFIG_NAME }`,
+    name: `${hederaNetworkPrefix}${HASHPACK_APP_CONFIG_NAME}`,
     description: HASHPACK_APP_CONFIG_DESCRIPTION,
-    icon: HASHPACK_APP_CONFIG_ICON_URL ?? `${ window.location.protocol }//${ window.location.host }/logo.svg`
+    icon: HASHPACK_APP_CONFIG_ICON_URL ?? `${window.location.protocol}//${window.location.host}/logo.svg`
   }), [hederaNetworkPrefix])
 
   //INITIALIZATION
   const initializeHashConnect = useCallback(async () => {
-    const hashConnectInitData = await hashConnect.init(appConfig, HEDERA_NETWORK, false  );
+    const hashConnectInitData = await hashConnect.init(appConfig, HEDERA_NETWORK, false);
     if (hashConnectInitData.savedPairings.length > 0) {
       setHashConnectState(prev => ({
         ...prev,
@@ -79,7 +78,6 @@ const useHashPack = () => {
   useEffect(() => {
     initializeHashConnect()
   }, [initializeHashConnect])
-  console.log(hashConnectState,"hashConnectState")
 
   //DISCONNECT
   const disconnectFromHashPack = useCallback(async () => {
@@ -91,7 +89,7 @@ const useHashPack = () => {
         pairingData: undefined
       }))
       hashConnect.hcData.pairingData = []
-      
+
       if (isIframeParent) {
         await hashConnect.clearConnectionsAndData();
       }
@@ -100,8 +98,9 @@ const useHashPack = () => {
 
   //CONNECT
   const connectToHashPack = useCallback(() => {
+    localStorage.clear();
     try {
-      if (typeof hashConnect.hcData.pairingString === 'undefined' || hashConnect.hcData.pairingString === '' ) {
+      if (typeof hashConnect.hcData.pairingString === 'undefined' || hashConnect.hcData.pairingString === '') {
         throw new Error(
           'No pairing key generated! Initialize HashConnect first!'
         );

@@ -51,7 +51,7 @@ export const HomepageContext = React.createContext<HomepageContextProps>({
 export const HomepageContextProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
   const [creatorStep, setCreatorStep] = useState(FormWizardSteps.WelcomeScreen);
   const [mintedNFTData, setNewNFTdata] = useState<FormikValues>({});
-  
+
   const resetHomepageData = useCallback(() => {
     setCreatorStep(FormWizardSteps.WelcomeScreen)
     setNewNFTdata({})

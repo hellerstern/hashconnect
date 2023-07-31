@@ -58,7 +58,6 @@ function Routes() {
         >
           <Switch>
             {routesMap}
-
             <Redirect from='*' to='/404' />
           </Switch>
         </CSSTransition>
