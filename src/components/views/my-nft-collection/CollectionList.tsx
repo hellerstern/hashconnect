@@ -18,8 +18,6 @@ export default function CollectionList({
   setSelectedCollectionsId
 }: CollectionListProps) {
 
-  debugger
-
   const clearSelectedCollectionsIds = useCallback(() => (
     setSelectedCollectionsId([])
   ), [setSelectedCollectionsId])

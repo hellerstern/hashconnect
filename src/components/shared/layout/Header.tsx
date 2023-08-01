@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { GiSkullCrossedBones } from 'react-icons/gi';
 import { enableBodyScroll } from 'body-scroll-lock';
-import classNames from 'classnames';
+import useHederaAccountNFTs from '@src/utils/hooks/useHederaAccountNFTs';
 import { Client, AccountBalanceQuery, TransferTransaction } from '@hashgraph/sdk';
 import {
   useCallback,
@@ -51,21 +51,6 @@ const Header = () => {
     isMobileSmall && isMobileNavbarMenuExpanded
   ), [isMobileSmall, isMobileNavbarMenuExpanded]);
 
-  const headerClassnames = classNames('header', {
-    'header--shade': location.pathname === '/' && isMinterWizardWelcomeScreen,
-    'is-mobile': isMobileSmall,
-  });
-
-  const mobileNavbarExpandedMenuClassnames = classNames(
-    'header__mobile-menu__wrapper',
-    {
-      'header__mobile-menu__is-hide': !isMobileNavbarMenuToogled,
-    }
-  );
-
-  const connectIconClassName = classNames('icon__connect', {
-    'icon--active': connectedWalletType !== ConnectionStateType.NOCONNECTION
-  })
 
   const closeNavbar = useCallback(() => {
     if (headerRef?.current) {
@@ -84,6 +69,17 @@ const Header = () => {
       : null
   ), [location.pathname, resetHomepageData])
 
+  const {
+    collections,
+    loading,
+    fetchHederaAccountNFTs
+  } = useHederaAccountNFTs(userWalletId)
+
+  useEffect(() => {
+    console.log('---------------------------');
+    fetchHederaAccountNFTs();
+  }, [])
+
   useEffect(() => {
     (async () => {
       const client = Client.forMainnet();
@@ -96,7 +92,6 @@ const Header = () => {
       console.log("balanceQuery: ", balanceQuery.tokens?._map.get(AppData.FTContract)?.low);
     })()
   })
-
 
 
   useEffect(() => {
@@ -116,7 +111,6 @@ const Header = () => {
             .addTokenTransfer(tokenId, accountId1, -1)
             .addTokenTransfer(tokenId, accountId2, 1)
             .freezeWithSigner(signer);
-          let res = await trans.executeWithSigner(signer);
         }
       }
     })()

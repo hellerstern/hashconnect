@@ -31,11 +31,11 @@ import { AppContextProvider } from '@utils/context/context';
 
 function App() {
   return (
-    <LayoutProvider>
-      <ModalProvider>
-        <HederaWalletsProvider>
-          <HomepageContextProvider>
-            <AppContextProvider>
+    <AppContextProvider>
+      <LayoutProvider>
+        <ModalProvider>
+          <HederaWalletsProvider>
+            <HomepageContextProvider>
               <>
                 <Router>
                   <Routes />
@@ -46,11 +46,11 @@ function App() {
                   newestOnTop
                 />
               </>
-            </AppContextProvider>
-          </HomepageContextProvider>
-        </HederaWalletsProvider>
-      </ModalProvider>
-    </LayoutProvider >
+            </HomepageContextProvider>
+          </HederaWalletsProvider>
+        </ModalProvider>
+      </LayoutProvider >
+    </AppContextProvider>
   );
 }
 

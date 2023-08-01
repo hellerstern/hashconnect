@@ -37,7 +37,7 @@ export default function NFT({ metadata, serial_number, collectionInfo }: NFTProp
     }
 
     try {
-      const fetchedMetadata = await IPFS.fetchData(metadata)
+      const fetchedMetadata = await IPFS.fetchData(metadata);
 
       if (fetchedMetadata) {
         setLoadedMetadata(fetchedMetadata);

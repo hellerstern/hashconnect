@@ -29,9 +29,9 @@ import { HederaWalletsContext } from '@utils/context/HederaWalletsContext';
 import { SigningService } from '@services/SigningService';
 
 export enum ConnectionStateType {
-  BLADEWALLET= 'bladewallet',
-  HASHPACK= 'hashpack',
-  NOCONNECTION= 'noconnection',
+  BLADEWALLET = 'bladewallet',
+  HASHPACK = 'hashpack',
+  NOCONNECTION = 'noconnection',
 }
 
 const useHederaWallets = () => {

@@ -229,7 +229,6 @@ const RightDiv = styled.div`
   min-height: 100%;
   color: white;
   overflow: scroll;
-  border: 1px solid red;
   border-left: 3px solid #99FFAF;
   margin-left: 5px;
   padding-left: 5px;
@@ -255,5 +254,4 @@ const ChatroomWrapper = styled.div`
   display: flex;
   overflow: scroll;
   flex: 1;
-  border: 1px solid yellow;
 `
