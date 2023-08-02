@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { GiSkullCrossedBones } from 'react-icons/gi';
 import { enableBodyScroll } from 'body-scroll-lock';
+import { toast } from 'react-toastify';
 import useHederaAccountNFTs from '@src/utils/hooks/useHederaAccountNFTs';
 import { Client, AccountBalanceQuery, TransferTransaction } from '@hashgraph/sdk';
 import {
@@ -24,6 +25,11 @@ import useLayout from '@utils/hooks/useLayout';
 import ConnectionModal from '@components/shared/modals/ConnectionModal';
 import { AppContext } from '@src/utils/context/context';
 import { HederaWalletsContext } from '@src/utils/context/HederaWalletsContext';
+
+
+import MirrorNode, { GroupedNFTsByCollectionIdWithInfo } from '@services/MirrorNode';
+import IPFS from '@src/services/IPFS';
+
 
 const Header = () => {
   const { connectedWalletType, userWalletId } = useHederaWallets();
@@ -76,122 +82,67 @@ const Header = () => {
   } = useHederaAccountNFTs(userWalletId)
 
   useEffect(() => {
-    console.log('---------------------------');
-    fetchHederaAccountNFTs();
-  }, [])
+
+
+    (async () => {
+
+      let groupedCollections;
+  
+      try {
+        const accountId = userWalletId ?? null;
+  
+        if (!accountId) {
+          throw new Error('No account ID! Connect wallet first.');
+        }
+
+        if (AppData.NFTIndex === -1) {
+          const fetchedNfts = await MirrorNode.fetchAllNFTs(accountId);
+
+          let metadata = {};
+
+          console.log('fetchedNfts: ', fetchedNfts);
+  
+          AppData.setNFTList(fetchedNfts);
+  
+          if (fetchedNfts.length === 0) {
+            toast.info("You don't have any NFT");
+          } else if (fetchedNfts.length === 1) {
+            AppData.setNFTIndex(0);
+
+            const fetchedMetadata = await IPFS.fetchData(fetchedNfts[0].metadata);
+
+            metadata = {...fetchedNfts[0], ...fetchedMetadata};
+
+            AppData.setSelectedNFTData(metadata)
+
+          } else  if (fetchedNfts.length > 1 ) {
+            
+          }
+        }
+  
+  
+      } catch (e) {
+        console.log(e);
+      }
+    })()
+
+  }, [userWalletId])
 
   useEffect(() => {
     (async () => {
       const client = Client.forMainnet();
-
-      client.setOperator
 
       const balanceQuery = await new AccountBalanceQuery().setAccountId('0.0.3239335')
         .execute(client);
+      
+      let bal = balanceQuery.tokens?._map.get(AppData.FTContract)?.low;
 
-      console.log("balanceQuery: ", balanceQuery.tokens?._map.get(AppData.FTContract)?.low);
+      AppData.setBalance(Number(bal));
+
     })()
-  })
-
-
-  useEffect(() => {
-    (async () => {
-
-      const tokenId = AppData.FTContract;
-      const accountId1 = '0.0.3239335';
-      const accountId2 = '0.0.1229586';
-      const client = Client.forMainnet();
-
-      const provider = hashConnect?.getProvider("mainnet", hashConnectState.topic || '', accountId1);
-      if (provider) {
-        const signer = hashConnect?.getSigner(provider);
-
-        if (signer) {
-          let trans = await new TransferTransaction()
-            .addTokenTransfer(tokenId, accountId1, -1)
-            .addTokenTransfer(tokenId, accountId2, 1)
-            .freezeWithSigner(signer);
-        }
-      }
-    })()
-  })
-
+  }, [AppData.renderFlag])
+  
   return (
-    // <header className={headerClassnames} ref={headerRef}>
-    //   <div className={classNames('header-container', 'container--padding')}>
-    //     <Link onClick={handleLogoClick} className='header__logo' to='/'>
-    //       <img src={Logo} alt='hedera_logo' height={66} width={110} />{' '}
-    //     </Link>
-    //     {!isMobileSmall ? (
-    //         <div className='header__buttons-wrapper'>
-    //           <Link to='/my-nft-collection' className='icon__profile'>
-    //             <img src={ProfileIcon} alt='profile_icon' />
-    //             <p>
-    //               My NFT <br />
-    //               Collection
-    //             </p>
-    //           </Link>
-
-    //           <button onClick={handleShowModal} className={connectIconClassName}>
-    //             <img src={ConnectIcon} alt='wallet_connect_icon' />
-    //             <div>
-    //               <SwitchTransition>
-    //                 <CSSTransition
-    //                   key={connectedWalletType}
-    //                   addEndListener={(node, done) => node.addEventListener('transitionend', done, false)}
-    //                   classNames='fade'
-    //                 >
-    //                   <div>
-    //                     {connectedWalletType === ConnectionStateType.NOCONNECTION ? (
-    //                       <>
-    //                         Connect <br />
-    //                         Wallet
-    //                       </>
-    //                     ) : (
-    //                       <>
-    //                         Connected <br />
-    //                         {userWalletId}
-    //                       </>
-    //                     )}
-    //                   </div>
-    //                 </CSSTransition>
-    //               </SwitchTransition>
-    //             </div>
-    //           </button>
-    //         </div>
-    //       ) : (
-    //         <Hamburger
-    //           label='Show menu'
-    //           rounded
-    //           color='#464646'
-    //           size={27}
-    //           toggled={isMobileNavbarMenuToogled}
-    //           toggle={setIsMobileNavbarMenuExpanded}
-    //         />
-    //       )
-    //     }
-    //   </div>
-    //   {isMobileSmall && (
-    //     <div
-    //       className={mobileNavbarExpandedMenuClassnames}
-    //       ref={expandedMenuRef}
-    //     >
-    //       <Link onClick={closeNavbar} to='/'>
-    //         Mint NFT
-    //       </Link>
-    //       <Link onClick={closeNavbar} to='/my-nft-collection'>
-    //         My NFT Collection
-    //       </Link>
-    //       <button onClick={handleShowModal}>
-    //           {connectedWalletType === ConnectionStateType.NOCONNECTION ? (
-    //             'Connect Wallet'
-    //           ) : (
-    //             `Connected ${ userWalletId }`
-    //           )}
-    //       </button>
-    //     </div>
-    //   )}
-    // </header>
     <HeaderWrapper>
       <TopHeader>
         <GiSkullCrossedBones></GiSkullCrossedBones>
@@ -216,15 +167,32 @@ const Header = () => {
             ) : undefined
           }
         </Pages>
-        <NavBarLink>
-          <a onClick={handleShowModal}>
-            {connectedWalletType === ConnectionStateType.NOCONNECTION ? (
-              'Connect'
-            ) : (
-              `Connected ${userWalletId}`
-            )}
-          </a>
-        </NavBarLink>
+        <Pages>
+          <NavBarLink>
+            <a onClick={handleShowModal}>
+              {connectedWalletType === ConnectionStateType.NOCONNECTION ? (
+                'Connect'
+              ) : (
+                `Connected ${userWalletId}`
+              )}
+            </a>
+          </NavBarLink>
+          <NavBarLink>
+            {
+              userWalletId && AppData.NFTIndex !== -1 && AppData.selectedNFTData ? (
+                <img src={AppData.selectedNFTData.image.replace('ipfs://', 'https://ipfs.io/ipfs/')} />
+              )
+              : null
+            }
+          </NavBarLink>
+          <NavBarLink>
+            <a>
+             {
+              userWalletId && "bal: " + AppData.balance
+             }
+            </a>
+          </NavBarLink>
+        </Pages>
       </NavBarContainer>
     </HeaderWrapper>
   );
@@ -266,12 +234,17 @@ const Pages = styled.div`
 const NavBarLink = styled.div`
   text-align: center;
   padding: 10px;
+  cursor: pointer;
   a {
     font-size: 20px;
     color: #99FFAF;
     text-decoration: none;
+  }
 
-    cursor: pointer;
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
   }
 `
 

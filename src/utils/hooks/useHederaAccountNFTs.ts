@@ -21,8 +21,6 @@ export default function useHederaAccountNFTs(userWalletId: string | undefined, s
 
       const fetchedNfts = await MirrorNode.fetchAllNFTs(accountId);
 
-      debugger;
-
       const groupedFetchedNfts = groupBy(fetchedNfts, 'token_id');
 
       groupedCollections = await MirrorNode.fetchCollectionInfoForGroupedNFTs(groupedFetchedNfts);
