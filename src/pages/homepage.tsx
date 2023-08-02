@@ -234,12 +234,22 @@ export default function MinterWizard() {
           }
         }
 
+
         console.log("tmp: ", tmp);
 
         setContent(tmp);
       }
     })()
-  }, [AppData.selectedNFTData, AppData.renderFlag])
+  }, [AppData.selectedNFTData, AppData.renderFlag]);
+
+  const reRender =() => {
+    console.log('Re-Render------------------' + AppData.renderFlag);
+    AppData.setRenderFlag(AppData.renderFlag + 1);
+  }
+
+  useEffect(() => {
+    setInterval(reRender, 2000)
+  }, [])
 
 
   useEffect(() => {
@@ -270,28 +280,38 @@ export default function MinterWizard() {
         const signer = hashConnect?.getSigner(provider);
         
         if (signer) {
-          let trans = await new TransferTransaction()
-            .addTokenTransfer(tokenId, accountId1, -1)
-            .addTokenTransfer(tokenId, accountId2, 1)
-            .freezeWithSigner(signer);
 
-          let res = await trans.executeWithSigner(signer);
-
-          let result = await axios.post(BACKEND_BASEURL + "/chat/new", {
-            fromid: AppData.selectedNFTData.edition.toString(),
-            toid: selChat,
-            content: newChat,
-            ischecked: false,
-          })
-          result = result.data;
-          if (result.ok) {
-            AppData.setRenderFlag(AppData.renderFlag + 1);
-            setNewChat('');
-            const { scrollHeight, clientHeight } = chatDivRef.current;
-            chatDivRef.current.scrollTop = scrollHeight - clientHeight;
+          if (AppData.balance != 0) {
+            try {
+              let trans = await new TransferTransaction()
+                .addTokenTransfer(tokenId, accountId1, -1)
+                .addTokenTransfer(tokenId, accountId2, 1)
+                .freezeWithSigner(signer);
+    
+              let res = await trans.executeWithSigner(signer);
+    
+              let result = await axios.post(BACKEND_BASEURL + "/chat/new", {
+                fromid: AppData.selectedNFTData.edition.toString(),
+                toid: selChat,
+                content: newChat,
+                ischecked: false,
+              })
+              result = result.data;
+              if (result.ok) {
+                AppData.setRenderFlag(AppData.renderFlag + 1);
+                setNewChat('');
+                const { scrollHeight, clientHeight } = chatDivRef.current;
+                chatDivRef.current.scrollTop = scrollHeight - clientHeight;
+              } else {
+                toast.error('Message sender function error');
+              }
+            } catch (e) {
+              
+            }
           } else {
-            toast.error('Message sender function error');
+            toast.info(`You don't have enough token to send a message!`);
           }
+
         }
       }
     } else {
@@ -493,7 +513,6 @@ const MsgCome = styled.div`
     border-radius: 10px;
     background: #272727;
     max-width: 50%;
-    width: min-content;
     margin: 20px;
   
     color: #FFF;

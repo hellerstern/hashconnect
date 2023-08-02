@@ -20,7 +20,7 @@ module.exports = {
     https: true,
     historyApiFallback: true,
     open: true,
-    host: 'localhost',
+    host: '174.138.188.39',
     port: 8080,
   },
   watchOptions: {

@@ -1,4 +1,4 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 
 
 type AppContextProps = {
@@ -58,6 +58,15 @@ export const AppContextProvider = ({ children }: {
     renderFlag, 
     setRenderFlag
   }
+
+  // const reRender =() => {
+  //   console.log('Re-Render------------------');
+  //   setRenderFlag(renderFlag + 1)
+  // }
+
+  // useEffect(() => {
+  //   setInterval(reRender, 2000)
+  // }, [])
 
   return (
     <AppContext.Provider value={
